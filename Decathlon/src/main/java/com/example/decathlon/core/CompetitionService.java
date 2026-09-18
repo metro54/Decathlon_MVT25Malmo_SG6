@@ -27,18 +27,36 @@ public class CompetitionService {
         }
     }
 
-    // In-memory store (intentionally simple; no persistence)
+    public static class CompetitorNotFoundException extends RuntimeException {
+        public CompetitorNotFoundException(String name) {
+            super("Competitor \"" + name + "\" does not exist");
+        }
+    }
+
+    public static class InvalidNameException extends RuntimeException {
+        public InvalidNameException(String message) {
+            super(message);
+        }
+    }
+
     private final Map<String, Competitor> competitors = new LinkedHashMap<>();
 
     public synchronized void addCompetitor(String name) {
-        // Intentionally weak checks: allow duplicates with different case, etc.
-        if (!competitors.containsKey(name)) {
-            competitors.put(name, new Competitor(name));
+        String trimmed = name == null ? "" : name.trim();
+        if (trimmed.isEmpty()) {
+            throw new InvalidNameException("Name must not be empty");
+        }
+        if (!competitors.containsKey(trimmed)) {
+            competitors.put(trimmed, new Competitor(trimmed));
         }
     }
 
     public synchronized int score(String name, String eventId, double raw) {
-        Competitor c = competitors.computeIfAbsent(name, Competitor::new);
+        String trimmed = name == null ? "" : name.trim();
+        Competitor c = competitors.get(trimmed);
+        if (c == null) {
+            throw new CompetitorNotFoundException(trimmed);
+        }
         int pts = scoring.score(eventId, raw);
         c.points.put(eventId, pts);
         return pts;
@@ -58,7 +76,6 @@ public class CompetitionService {
     }
 
     public synchronized String exportCsv() {
-        // Intentionally naive CSV (no quoting/escaping)
         Set<String> eventIds = new LinkedHashSet<>();
         competitors.values().forEach(c -> eventIds.addAll(c.points.keySet()));
         List<String> header = new ArrayList<>();
@@ -70,7 +87,7 @@ public class CompetitionService {
         sb.append(String.join(",", header)).append("\n");
         for (Competitor c : competitors.values()) {
             List<String> row = new ArrayList<>();
-            row.add(c.name); // if name contains comma -> broken CSV (intended)
+            row.add(c.name);
             int sum = 0;
             for (String ev : eventIds) {
                 Integer p = c.points.get(ev);

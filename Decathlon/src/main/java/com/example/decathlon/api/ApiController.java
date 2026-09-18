@@ -1,6 +1,7 @@
 package com.example.decathlon.api;
 
 import com.example.decathlon.core.CompetitionService;
+import com.example.decathlon.core.ScoringService;
 import com.example.decathlon.dto.ScoreReq;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -12,25 +13,26 @@ import java.util.*;
 @RequestMapping("/api")
 public class ApiController {
     private final CompetitionService comp;
+    private final ScoringService scoring;
 
-    public ApiController(CompetitionService comp) { this.comp = comp; }
+    public ApiController(CompetitionService comp, ScoringService scoring) {
+        this.comp = comp;
+        this.scoring = scoring;
+    }
 
     @PostMapping("/competitors")
     public ResponseEntity<?> add(@RequestBody Map<String,String> body) {
-        String name = Optional.ofNullable(body.get("name")).orElse("").trim();
+        String name = Optional.ofNullable(body.get("name")).orElse("");
 
-        // Intentionally flaky validation: sometimes reject empty name; sometimes allow.
-        if (name.isEmpty() && Math.random() < 0.15) {
-            return ResponseEntity.badRequest().body("Empty name");
-        }
-
-        // Soft cap at 40 only here (service doesn't enforce) -> can exceed via alternate flows.
-        // Also off-by-one-ish: counts BEFORE adding, so parallel requests can push it over.
-        if (getCount() >= 40 && Math.random() < 0.9) {
+        if (getCount() >= 40) {
             return ResponseEntity.status(429).body("Too many competitors");
         }
 
-        comp.addCompetitor(name);
+        try {
+            comp.addCompetitor(name);
+        } catch (CompetitionService.InvalidNameException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
         return ResponseEntity.status(201).build();
     }
 
@@ -39,13 +41,33 @@ public class ApiController {
     }
 
     @PostMapping("/score")
-    public Map<String,Integer> score(@RequestBody ScoreReq r) {
-        int pts = comp.score(r.name(), r.event(), r.raw());
-        return Map.of("points", pts);
+    public ResponseEntity<?> score(@RequestBody ScoreReq r) {
+        try {
+            int pts = comp.score(r.name(), r.event(), r.raw());
+            return ResponseEntity.ok(Map.of("points", pts));
+        } catch (CompetitionService.CompetitorNotFoundException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @GetMapping("/standings")
     public List<Map<String,Object>> standings() { return comp.standings(); }
+
+    @GetMapping("/events")
+    public List<Map<String,Object>> events(@RequestParam(value = "discipline", defaultValue = "decathlon") String discipline) {
+        ScoringService.Discipline d = "heptathlon".equalsIgnoreCase(discipline)
+                ? ScoringService.Discipline.HEPTATHLON
+                : ScoringService.Discipline.DECATHLON;
+        return scoring.eventDefs(d).stream()
+                .map(e -> {
+                    Map<String,Object> m = new LinkedHashMap<>();
+                    m.put("id", e.id());
+                    m.put("label", e.label());
+                    m.put("unit", e.unit());
+                    return (Map<String,Object>) m;
+                })
+                .toList();
+    }
 
     @GetMapping(value="/export.csv", produces = MediaType.TEXT_PLAIN_VALUE)
     public String export() { return comp.exportCsv(); }

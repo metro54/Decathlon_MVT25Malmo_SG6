@@ -1,18 +1,34 @@
 package com.example.decathlon.gui;
 
-
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-
-
 import java.awt.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-import com.example.decathlon.deca.*;
-
+import com.example.decathlon.core.ScoringService;
 
 public class MainGUI {
+
+    private final ScoringService scoringService = new ScoringService();
+
+    private static final Map<String, String> EVENT_IDS = buildEventIds();
+
+    private static Map<String, String> buildEventIds() {
+        Map<String, String> m = new LinkedHashMap<>();
+        m.put("100m", "100m");
+        m.put("400m", "400m");
+        m.put("1500m", "1500m");
+        m.put("110m Hurdles", "110mHurdles");
+        m.put("Long Jump", "longJump");
+        m.put("High Jump", "highJump");
+        m.put("Pole Vault", "poleVault");
+        m.put("Discus Throw", "discusThrow");
+        m.put("Javelin Throw", "javelinThrow");
+        m.put("Shot Put", "shotPut");
+        return m;
+    }
 
     private JTextField nameField;
     private JTextField resultField;
@@ -30,32 +46,23 @@ public class MainGUI {
 
         JPanel panel = new JPanel(new GridLayout(6, 1));
 
-        // Input for competitor's name
         nameField = new JTextField(20);
         panel.add(new JLabel("Enter Competitor's Name:"));
         panel.add(nameField);
 
-        // Dropdown for selecting discipline
-        String[] disciplines = {
-                "100m", "400m", "1500m", "110m Hurdles",
-                "Long Jump", "High Jump", "Pole Vault",
-                "Discus Throw", "Javelin Throw", "Shot Put"
-        };
+        String[] disciplines = EVENT_IDS.keySet().toArray(new String[0]);
         disciplineBox = new JComboBox<>(disciplines);
         panel.add(new JLabel("Select Discipline:"));
         panel.add(disciplineBox);
 
-        // Input for result
         resultField = new JTextField(10);
         panel.add(new JLabel("Enter Result:"));
         panel.add(resultField);
 
-        // Button to calculate and display result
         JButton calculateButton = new JButton("Calculate Score");
         calculateButton.addActionListener(new CalculateButtonListener());
         panel.add(calculateButton);
 
-        // Output area
         outputArea = new JTextArea(5, 40);
         outputArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(outputArea);
@@ -74,50 +81,8 @@ public class MainGUI {
 
             try {
                 double result = Double.parseDouble(resultText);
-
-                int score = 0;
-                switch (discipline) {
-                    case "100m":
-                        Deca100M deca100M = new Deca100M();
-                        score = deca100M.calculateResult(result);
-                        break;
-                    case "400m":
-                        Deca400M deca400M = new Deca400M();
-                        score = deca400M.calculateResult(result);
-                        break;
-                    case "1500m":
-                        Deca1500M deca1500M = new Deca1500M();
-                        score = deca1500M.calculateResult(result);
-                        break;
-                    case "110m Hurdles":
-                        Deca110MHurdles deca110MHurdles = new Deca110MHurdles();
-                        score = deca110MHurdles.calculateResult(result);
-                        break;
-                    case "Long Jump":
-                        DecaLongJump decaLongJump = new DecaLongJump();
-                        score = decaLongJump.calculateResult(result);
-                        break;
-                    case "High Jump":
-                        DecaHighJump decaHighJump = new DecaHighJump();
-                        score = decaHighJump.calculateResult(result);
-                        break;
-                    case "Pole Vault":
-                        DecaPoleVault decaPoleVault = new DecaPoleVault();
-                        score = decaPoleVault.calculateResult(result);
-                        break;
-                    case "Discus Throw":
-                        DecaDiscusThrow decaDiscusThrow = new DecaDiscusThrow();
-                        score = decaDiscusThrow.calculateResult(result);
-                        break;
-                    case "Javelin Throw":
-                        DecaJavelinThrow decaJavelinThrow = new DecaJavelinThrow();
-                        score = decaJavelinThrow.calculateResult(result);
-                        break;
-                    case "Shot Put":
-                        DecaShotPut decaShotPut = new DecaShotPut();
-                        score = decaShotPut.calculateResult(result);
-                        break;
-                }
+                String eventId = EVENT_IDS.get(discipline);
+                int score = scoringService.score(eventId, result);
 
                 outputArea.append("Competitor: " + name + "\n");
                 outputArea.append("Discipline: " + discipline + "\n");

@@ -5,14 +5,13 @@ import java.util.Scanner;
 public class InputName {
 	String compName = "";
 
-	
-	//Add competitor
+
 	public String addCompetitor() {
 
 		boolean active = true;
 		String compName = "";
 		Scanner sc = new Scanner(System.in);
-		
+
 		while (active) {
 			System.out.println("Please enter the competitor's name:");
 			compName = sc.nextLine();
@@ -23,7 +22,7 @@ public class InputName {
 				active = false;
 			}
 
-		} 
+		}
 		return compName;
-	} 
+	}
 }

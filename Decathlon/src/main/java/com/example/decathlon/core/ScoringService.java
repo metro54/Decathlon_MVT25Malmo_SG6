@@ -22,40 +22,40 @@ public class ScoringService {
         Map<String, EventDef> m = new LinkedHashMap<>();
 
         m.put("100m", new EventDef("100m", "100m", Discipline.DECATHLON, Type.TRACK,
-                25.4347, 18.0, 1.81, 5, 17.8, "s"));
+                25.4347, 18.0, 1.81, 5, 17.99, "s"));
         m.put("longJump", new EventDef("longJump", "Long Jump", Discipline.DECATHLON, Type.FIELD,
-                0.14354, 220.0, 1.4, 250, 1000, "cm"));
+                0.14354, 220.0, 1.4, 220.01, 1000, "cm"));
         m.put("shotPut", new EventDef("shotPut", "Shot Put", Discipline.DECATHLON, Type.FIELD,
-                51.39, 1.5, 1.05, 0, 30, "m"));
+                51.39, 1.5, 1.05, 1.51,30, "m"));
         m.put("highJump", new EventDef("highJump", "High Jump", Discipline.DECATHLON, Type.FIELD,
-                0.8465, 75.0, 1.42, 0, 100, "cm"));
+                0.8465, 75.0, 1.42, 75.01, 300, "cm"));
         m.put("400m", new EventDef("400m", "400m", Discipline.DECATHLON, Type.TRACK,
-                1.53775, 82.0, 1.81, 20, 100, "s"));
+                1.53775, 82.0, 1.81, 20, 81.99, "s"));
         m.put("110mHurdles", new EventDef("110mHurdles", "110m Hurdles", Discipline.DECATHLON, Type.TRACK,
-                5.74352, 28.5, 1.92, 10, 28.5, "s"));
+                5.74352, 28.5, 1.92, 10, 28.49, "s"));
         m.put("discusThrow", new EventDef("discusThrow", "Discus Throw", Discipline.DECATHLON, Type.FIELD,
-                12.91, 4.0, 1.1, 0, 85, "m"));
+                12.91, 4.0, 1.1, 4.01, 85, "m"));
         m.put("poleVault", new EventDef("poleVault", "Pole Vault", Discipline.DECATHLON, Type.FIELD,
-                0.2797, 100.0, 1.35, 2, 1000, "cm"));
+                0.2797, 100.0, 1.35, 100.01, 1000, "cm"));
         m.put("javelinThrow", new EventDef("javelinThrow", "Javelin Throw", Discipline.DECATHLON, Type.FIELD,
-                10.14, 7.0, 1.08, 0, 110, "m"));
+                10.14, 7.0, 1.08, 7.01, 110, "m"));
         m.put("1500m", new EventDef("1500m", "1500m", Discipline.DECATHLON, Type.TRACK,
-                0.03768, 480.0, 18.5, 2, 7, "s"));
+                0.03768, 480.0, 1.85, 150, 479.99, "s"));
 
         m.put("hep100mHurdles", new EventDef("hep100mHurdles", "100m Hurdles", Discipline.HEPTATHLON, Type.TRACK,
-                9.23076, 26.7, 18.35, 5, 26.4, "s"));
+                9.23076, 26.7, 1.835, 10, 26.69, "s"));
         m.put("hepHighJump", new EventDef("hepHighJump", "High Jump", Discipline.HEPTATHLON, Type.FIELD,
-                1.84523, 75.0, 1.348, 75.7, 270, "cm"));
+                1.84523, 75.0, 1.348, 75.01, 300, "cm"));
         m.put("hepShotPut", new EventDef("hepShotPut", "Shot Put", Discipline.HEPTATHLON, Type.FIELD,
-                56.0211, 1.5, 1.05, 5, 100, "m"));
+                56.0211, 1.5, 1.05, 1.51, 30, "m"));
         m.put("hep200m", new EventDef("hep200m", "200m", Discipline.HEPTATHLON, Type.TRACK,
-                4.99087, 42.5, 1.81, 14, 42.08, "s"));
+                4.99087, 42.5, 1.81, 20, 42.49, "s"));
         m.put("hepLongJump", new EventDef("hepLongJump", "Long Jump", Discipline.HEPTATHLON, Type.FIELD,
-                0.1888807, 210.0, 1.41, 0, 400, "m"));
+                0.188807, 210.0, 1.41, 210.01, 1000, "cm"));
         m.put("hepJavelinThrow", new EventDef("hepJavelinThrow", "Javelin Throw", Discipline.HEPTATHLON, Type.FIELD,
-                15.9803, 3.8, 1.04, 0, 100, "m"));
+                15.9803, 3.8, 1.04, 3.81, 110, "m"));
         m.put("hep800m", new EventDef("hep800m", "800m", Discipline.HEPTATHLON, Type.TRACK,
-                0.11193, 254.0, 1.88, 70, 250.79, "s"));
+                0.11193, 254.0, 1.88, 70, 253.99, "s"));
 
         return m;
     }
